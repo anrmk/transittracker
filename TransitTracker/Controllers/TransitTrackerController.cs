@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 
+using TransitTracker.Models;
 using TransitTracker.Services;
 
 namespace TransitTracker.Controllers {
@@ -18,15 +19,9 @@ namespace TransitTracker.Controllers {
         }
 
         [HttpGet(Name = "GetStops")]
-        public void GetStops() {
-
-
+        public IEnumerable<RouteModel> GetStops(int id) {
+            var routes = _transitTrackerService.GetRoutes(id);
+            return routes;
         }
-
-        //private static readonly string[] Summaries = new[] {
-        //    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        //};
-
-
     }
 }
