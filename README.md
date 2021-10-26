@@ -4,7 +4,6 @@ By Aziz Nurmukhamedov
 
 ![image](https://user-images.githubusercontent.com/5101579/138818097-0b5f0f28-1446-4a28-94c6-8cb4e818d05e.png)
 
-
 ## Technologies used
 - ASP.NET MVC
 - JavaScript
@@ -43,6 +42,6 @@ Example output when running the app at 3:01PM:
 - Navigate to the top level of the directory
 - Use Visual Studio 2019 (or more) to open project `TransitTracker.sln`
 - Befor start app, you need to `Restore Nuget Packages` and `Client-Side Libraries`
-- Start application
+- Start application (Swagger: https://localhost:44379/swagger; WebApp: https://localhost:44379/home)
 
 ![image](https://user-images.githubusercontent.com/5101579/138814507-e9b0830d-9209-4293-997a-4fa3a394a6cc.png)
