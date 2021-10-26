@@ -3,19 +3,20 @@
 }
 
 <div class="container">
-
     <div class="row">
-        <div class="col-12">
-            <ul id="stopsContainer" class="nav">
-            </ul>
+        <div class="col">
+            <div id="stopsContainer" class="nav justify-content-center">
+            </div>
         </div>
-        <div class="col-12">
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-sm-12">
             <h4>Bus stop #<span id="currentBusNumber">0</span></h4>
             <div id="currentStop" class="nav-item">
             </div>
         </div>
-
-        <div class="col-12">
+  
+        <div class="col-lg-6 col-sm-12">
             <h4>Next stop #<span id="nextBusNumber">0</span></h4>
             <div id="nextStop" class="nav-item">
             </div>
@@ -26,6 +27,7 @@
 
 @section Scripts {
     <script type="text/javascript">
+        var classNames = ['list-group-item-primary', 'list-group-item-danger', 'list-group-item-success'];
         var stopSelected = 0;
         var _data = null;
 
@@ -69,10 +71,7 @@
             const currentStop = _data?.find(x => x.id === stopSelected ? true : false);
 
             if (currentStop !== null) {
-                const currentRows = currentStop.routes.map(x => {
-                    var transit = x.transits[0];
-                    return _renderRouteItem(x.name, x.transitsToString[0], transit.hours, transit.minutes);
-                });
+                const currentRows = currentStop.routes.map(x => _renderRouteItem(x.id, x.name, x.transitsToString[0], x.transits[0]));
 
                 $('#currentStop')
                     .empty()
@@ -83,29 +82,26 @@
             $('#nextStop').empty();
             if (nextStop !== undefined) {
                 $('#nextBusNumber').html(stopSelected + 2);
-                const nextRows = nextStop.routes.map(x => {
-                    var transit = x.transits[0];
-                    return _renderRouteItem(x.name, x.transitsToString[0], transit.hours, transit.minutes);
-                });
-
+                const nextRows = nextStop.routes.map(x => _renderRouteItem(x.id, x.name, x.transitsToString[0], x.transits[0]));
                 $('#nextStop').append(nextRows);
-
             }
             console.log("Routes updated")
         }
 
-        _renderRouteItem = (name, arrivalTime, h, m) => {
+        _renderRouteItem = (id, name, arrivalTime, transit) => {
+            var h = transit.hours;
+            var m = transit.minutes;
             var d2 = new Date();
             d2.setHours(h);
             d2.setMinutes(m);
             var duration = moment(d2).fromNow();
-            return `<li class='list-group-item' data-time=${arrivalTime}>
-                                                    <div class='d-flex w-100 align-items-center justify-content-between'>
-                                                        <strong>${name}</strong>
-                                                        <small>${duration}</small>
-                                                    </div>
-                                                    <div class='col-10 mb-1 small'>Arrived at: ${arrivalTime}</div>
-                                                </li>`
+            return `<li class='list-group-item ${classNames[id]}' >
+                        <div class='d-flex w-100 align-items-center justify-content-between'>
+                            <strong>${name}</strong>
+                            <small>${duration}</small>
+                        </div>
+                        <div class='col-10 mb-1 small'>Arrived at: ${arrivalTime}</div>
+                    </li>`
         }
 
     </script>
