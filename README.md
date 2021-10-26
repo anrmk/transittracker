@@ -2,6 +2,9 @@
 
 By Aziz Nurmukhamedov
 
+![image](https://user-images.githubusercontent.com/5101579/138818097-0b5f0f28-1446-4a28-94c6-8cb4e818d05e.png)
+
+
 ## Technologies used
 - ASP.NET MVC
 - JavaScript
