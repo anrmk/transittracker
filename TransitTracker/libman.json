@@ -5,6 +5,18 @@
     {
       "library": "bootstrap@5.1.3",
       "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "library": "jquery@3.6.0",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "aspnet-signalr@1.1.4",
+      "destination": "wwwroot/lib/aspnet-signalr/"
+    },
+    {
+      "library": "moment.js@2.29.1",
+      "destination": "wwwroot/lib/moment.js/"
     }
   ]
 }

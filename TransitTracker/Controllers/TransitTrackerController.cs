@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,9 +16,21 @@ namespace TransitTracker.Controllers {
             _transitTrackerService = transitTrackerService;
         }
 
-        [HttpGet(Name = "GetStops")]
-        public IEnumerable<RouteModel> GetStops(int id) {
-            var routes = _transitTrackerService.GetRoutes(id);
+        [HttpGet("GetStops", Name = "GetStops")]
+        public IEnumerable<StopModel> GetStops() {
+            var currentTime = DateTime.Now;
+
+            var time = new TimeSpan(currentTime.Hour, currentTime.Minute, 00);
+
+            var routes = _transitTrackerService.GetStops(time);
+            return routes;
+        }
+
+        [HttpGet("GetRoutes", Name = "GetRoutes")]
+        public IEnumerable<RouteModel> GetRoutes(int id) {
+            var time = new TimeSpan(15, 1, 00);
+
+            var routes = _transitTrackerService.GetRoutes(id, time);
             return routes;
         }
     }

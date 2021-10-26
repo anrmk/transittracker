@@ -1,5 +1,112 @@
-﻿@{ 
+﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-Test
+<div class="container">
+
+    <div class="row">
+        <div class="col-12">
+            <ul id="stopsContainer" class="nav">
+            </ul>
+        </div>
+        <div class="col-12">
+            <h4>Bus stop #<span id="currentBusNumber">0</span></h4>
+            <div id="currentStop" class="nav-item">
+            </div>
+        </div>
+
+        <div class="col-12">
+            <h4>Next stop #<span id="nextBusNumber">0</span></h4>
+            <div id="nextStop" class="nav-item">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script type="text/javascript">
+        var stopSelected = 0;
+        var _data = null;
+
+        $(document).ready(function () {
+            $('#stopsContainer').on('click', (e) => {
+                if (e.target.tagName === 'A') {
+                    stopSelected = parseInt(e.target.id);
+                    _renderRoutes();
+                }
+            })
+
+            window.Hub = new TransitHub({}, (data) => {
+                _data = data;
+                $(document).trigger("storage");
+            });
+
+            $(document).on('storage', _updateStorage);
+            $.get('/transitTracker/getStops', (data) => {
+                _data = data;
+                $(document).trigger("storage");
+            });
+        });
+
+        _updateStorage = (e, data) => {
+            _renderStops();
+            _renderRoutes();
+        }
+
+        _renderStops = () => {
+            const stops = _data?.map(x => `<a href='#' class='nav-link ${x.id === stopSelected ? 'active' : ''}' id='${x.id}'>${x.name}</li>`);
+
+            $('#stopsContainer')
+                .empty()
+                .append(stops);
+            console.log("Stops updated")
+        };
+
+        _renderRoutes = () => {
+            $('#currentBusNumber').html(stopSelected + 1);
+
+            const currentStop = _data?.find(x => x.id === stopSelected ? true : false);
+
+            if (currentStop !== null) {
+                const currentRows = currentStop.routes.map(x => {
+                    var transit = x.transits[0];
+                    return _renderRouteItem(x.name, x.transitsToString[0], transit.hours, transit.minutes);
+                });
+
+                $('#currentStop')
+                    .empty()
+                    .append(currentRows);
+            }
+
+            const nextStop = _data?.find(x => x.id === (stopSelected + 1) ? true : false);
+            $('#nextStop').empty();
+            if (nextStop !== undefined) {
+                $('#nextBusNumber').html(stopSelected + 2);
+                const nextRows = nextStop.routes.map(x => {
+                    var transit = x.transits[0];
+                    return _renderRouteItem(x.name, x.transitsToString[0], transit.hours, transit.minutes);
+                });
+
+                $('#nextStop').append(nextRows);
+
+            }
+            console.log("Routes updated")
+        }
+
+        _renderRouteItem = (name, arrivalTime, h, m) => {
+            var d2 = new Date();
+            d2.setHours(h);
+            d2.setMinutes(m);
+            var duration = moment(d2).fromNow();
+            return `<li class='list-group-item' data-time=${arrivalTime}>
+                                                    <div class='d-flex w-100 align-items-center justify-content-between'>
+                                                        <strong>${name}</strong>
+                                                        <small>${duration}</small>
+                                                    </div>
+                                                    <div class='col-10 mb-1 small'>Arrived at: ${arrivalTime}</div>
+                                                </li>`
+        }
+
+    </script>
+}

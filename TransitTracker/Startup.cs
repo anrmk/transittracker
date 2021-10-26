@@ -5,6 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
+
+using TransitTracker.Hubs;
+using TransitTracker.Jobs;
+using TransitTracker.Jobs.Services;
 using TransitTracker.Services;
 
 namespace TransitTracker {
@@ -17,9 +24,20 @@ namespace TransitTracker {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-
             services.AddControllers();
+            services.AddRazorPages();
+            services.AddSignalR();
+
             services.AddTransient<ITransitTrackerService, TransitTrackerService>();
+
+            #region JOBS
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+
+            services.AddSingleton(new JobSchedule(typeof(TransitJob), "0 0/1 * 1/1 * ? *"));
+            services.AddSingleton<TransitJob>();
+            services.AddHostedService<QuartzHostedService>();
+            #endregion
 
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TransitTracker", Version = "v1" });
@@ -37,12 +55,14 @@ namespace TransitTracker {
             }
 
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
+                endpoints.MapHub<TransitHub>("/transitHub");
+
                 endpoints.MapControllers();
 
                 endpoints.MapControllerRoute(

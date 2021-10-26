@@ -9,14 +9,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Transit Tracker</title>
 
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+
     @*<partial name="_StylePartial" />*@
 </head>
 
-<body id="mainbody" class="bg-light">
-    <div class="container-fluid">
-        @RenderBody()
-    </div>
-    <partial name="_ScriptPartial" />
+<body id="mainbody" class="bg-light d-flex flex-column h-100">
+    @RenderBody()
+
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/lib/moment.js/moment.min.js"></script>
+    <script src="~/lib/aspnet-signalr/signalr.min.js"></script>
+    <script src="~/js/transitHub.js"></script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

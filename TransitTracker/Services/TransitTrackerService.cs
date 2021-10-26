@@ -7,11 +7,12 @@ using TransitTracker.Models;
 
 namespace TransitTracker.Services {
     public interface ITransitTrackerService {
-        List<RouteModel> GetRoutes(int stopId);
+        List<StopModel> GetStops(TimeSpan timeSpan);
+        List<RouteModel> GetRoutes(int stopId, TimeSpan timeSpan);
     }
 
     public class TransitTrackerService: ITransitTrackerService {
-        private static readonly int busStops = 10;
+        public static readonly int busStops = 10;
         private static readonly int routeCount = 3;
         private static readonly int serviceInterval = 15; //min
         private static readonly int delay = 2; //min
@@ -53,10 +54,29 @@ namespace TransitTracker.Services {
             }
         }
 
-        public List<RouteModel> GetRoutes(int stopId) {
-            //var time = DateTime.Now.TimeOfDay;
-            var time = new TimeSpan(15, 1, 00);
+        public List<StopModel> GetStops(TimeSpan timeSpan) {
+            return Routes
+                .GroupBy(x => x.StopId)
+                .ToDictionary(x => x.Key, x => x.ToList())
+                .Select(x => new StopModel {
+                    Id = x.Key,
+                    Name = $"Stop #{x.Key + 1}",
+                    Routes = x.Value.Select(r => new RouteModel {
+                        Id = r.Id,
+                        Name = r.Name,
+                        StopId = r.StopId,
+                        StopName = r.StopName,
+                        Transits = r.Transits
+                         .Where(y => y > timeSpan)
+                         .Take(1)
+                         .ToList()
+                    }).ToList()
+                })
+                .ToList();
+        }
 
+
+        public List<RouteModel> GetRoutes(int stopId, TimeSpan timeSpan) {
             return Routes
                 .Where(x => x.StopId == stopId)
                 .Select(x => new RouteModel {
@@ -65,7 +85,7 @@ namespace TransitTracker.Services {
                     StopId = x.StopId,
                     StopName = x.StopName,
                     Transits = x.Transits
-                        .Where(y => y > time)
+                        .Where(y => y > timeSpan)
                         .Take(1)
                         .ToList()
                 }).ToList();
