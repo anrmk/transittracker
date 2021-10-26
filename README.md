@@ -41,3 +41,5 @@ Example output when running the app at 3:01PM:
 - Use Visual Studio 2019 (or more) to open project `TransitTracker.sln`
 - Befor start app, you need to `Restore Nuget Packages` and `Client-Side Libraries`
 - Start application
+
+![image](https://user-images.githubusercontent.com/5101579/138814507-e9b0830d-9209-4293-997a-4fa3a394a6cc.png)
